@@ -5,9 +5,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="ExternalProviders\" />
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
-
 </Project>
