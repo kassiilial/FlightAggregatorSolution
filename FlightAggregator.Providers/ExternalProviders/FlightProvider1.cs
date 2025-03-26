@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using FlightAggregator.Models.Configurations;
+using FlightAggregator.Models.Entities;
+using FlightAggregator.Providers.Interfaces;
 
-namespace FlightAggregator.Api.Providers
+namespace FlightAggregator.Providers.ExternalProviders
 {
     public class FlightProvider1 : IFlightProvider
     {

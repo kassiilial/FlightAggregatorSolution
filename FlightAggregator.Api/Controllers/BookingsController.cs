@@ -1,9 +1,6 @@
-using FlightAggregator.Api.Models;
-using FlightAggregator.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System.Threading;
-using System.Threading.Tasks;
+using FlightAggregator.Business;
+using FlightAggregator.Models.Entities;
 
 namespace FlightAggregator.Api.Controllers
 {

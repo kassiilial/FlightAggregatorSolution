@@ -1,6 +1,7 @@
 ## Visual Studio temporary files
 .vs/
 .vscode/
+.idea/
 
 ## User-specific files
 *.rsuser
@@ -33,11 +34,6 @@ bld/
 project.lock.json
 project.fragment.lock.json
 artifacts/
-
-## Local configuration files
-appsettings.Development.json
-appsettings.*.json
-!appsettings.json
 
 ## Others
 *.swp

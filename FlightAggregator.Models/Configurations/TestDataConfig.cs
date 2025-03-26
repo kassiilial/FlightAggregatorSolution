@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using FlightAggregator.Models.Entities;
 
 namespace FlightAggregator.Models.Configurations;
 
