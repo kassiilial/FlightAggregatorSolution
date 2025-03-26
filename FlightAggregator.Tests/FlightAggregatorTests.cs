@@ -41,4 +41,35 @@ public class FlightAggregatorTests
         Assert.Contains(result, f => f.Id == "FP1-001");
         Assert.Contains(result, f => f.Id == "FP2-101");
     }
+    
+    [Fact]
+    public async Task BookFlightAsync_CallsCorrectProvider()
+    {
+        // Arrange
+        var mockProvider1 = new Mock<IFlightProvider>();
+        var mockProvider2 = new Mock<IFlightProvider>();
+
+        var bookingRequest = new BookingRequest("FP1-001", "John Doe", "john@example.com");
+
+        mockProvider1
+            .Setup(p => p.BookFlightAsync(bookingRequest, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true)
+            .Verifiable();
+
+        mockProvider2
+            .Setup(p => p.BookFlightAsync(It.IsAny<BookingRequest>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
+        var providers = new List<IFlightProvider> { mockProvider1.Object, mockProvider2.Object };
+        var logger = Mock.Of<ILogger<FlightAggregatorService>>();
+        var aggregatorService = new FlightAggregatorService(providers, logger);
+
+        // Act
+        var result = await aggregatorService.BookFlightAsync(bookingRequest, CancellationToken.None);
+
+        // Assert
+        Assert.True(result);
+        mockProvider1.Verify(p => p.BookFlightAsync(bookingRequest, It.IsAny<CancellationToken>()), Times.Once);
+        mockProvider2.Verify(p => p.BookFlightAsync(It.IsAny<BookingRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
 }

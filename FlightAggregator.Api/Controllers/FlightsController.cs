@@ -22,7 +22,7 @@ namespace FlightAggregator.Api.Controllers
                                                       [FromQuery] decimal maxPrice,
                                                       CancellationToken cancellationToken)
         {
-            var cacheKey = $"flights-{departure}-{destination}-{date:yyyyMMdd}-{maxStops}-{maxPrice}";
+            var cacheKey = $"flights-{departure}-{destination}-{date:yyyyMMdd}";
             var cachedData = await cache.GetStringAsync(cacheKey, cancellationToken);
             List<Flight> flights;
 
@@ -38,7 +38,7 @@ namespace FlightAggregator.Api.Controllers
 
                 var options = new DistributedCacheEntryOptions
                 {
-                    SlidingExpiration = TimeSpan.FromMinutes(5)
+                    SlidingExpiration = TimeSpan.FromHours(1)
                 };
 
                 var serializedFlights = JsonSerializer.Serialize(flights);
@@ -47,7 +47,9 @@ namespace FlightAggregator.Api.Controllers
             else
             {
                 logger.LogInformation("Cache hit for key: {CacheKey}", cacheKey);
-                flights = JsonSerializer.Deserialize<List<Flight>>(cachedData);
+                flights = JsonSerializer.Deserialize<List<Flight>>(cachedData)
+                    .Where(f => f.Stops <= maxStops && f.Price <= maxPrice)
+                    .ToList();
             }
 
             return Ok(flights);
