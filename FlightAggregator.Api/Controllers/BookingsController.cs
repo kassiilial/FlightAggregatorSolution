@@ -10,7 +10,8 @@ namespace FlightAggregator.Api.Controllers
         : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> BookFlight([FromBody] BookingRequest bookingRequest, CancellationToken cancellationToken)
+        public async Task<IActionResult> BookFlight([FromBody] BookingRequest bookingRequest,
+            CancellationToken cancellationToken)
         {
             var success = await aggregatorService.BookFlightAsync(bookingRequest, cancellationToken);
             if (success)

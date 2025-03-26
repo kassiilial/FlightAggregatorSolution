@@ -13,12 +13,12 @@ namespace FlightAggregator.Providers.ExternalProviders
     public class FlightProvider2(IOptions<FlightConfiguration> options) : IFlightProvider
     {
         private readonly FlightConfiguration _configuration = options.Value;
-        
+
         public async Task<List<Flight>> GetFlightsAsync(string departure, string destination, DateTime date,
             CancellationToken cancellationToken)
         {
-            if(!EnvironmentHelper.IsDevelopment()) return [];
-            
+            if (!EnvironmentHelper.IsDevelopment()) return [];
+
             await Task.Delay(500, cancellationToken);
             return _configuration.Provider2Flights.Where(f => f.Departure == departure
                                                               && f.Destination == destination
@@ -27,8 +27,8 @@ namespace FlightAggregator.Providers.ExternalProviders
 
         public async Task<bool> BookFlightAsync(BookingRequest request, CancellationToken cancellationToken)
         {
-            if(!EnvironmentHelper.IsDevelopment()) return false;
-            
+            if (!EnvironmentHelper.IsDevelopment()) return false;
+
             await Task.Delay(500, cancellationToken);
             return true;
         }

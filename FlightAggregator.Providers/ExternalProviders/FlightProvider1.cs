@@ -17,8 +17,8 @@ namespace FlightAggregator.Providers.ExternalProviders
         public async Task<List<Flight>> GetFlightsAsync(string departure, string destination, DateTime date,
             CancellationToken cancellationToken)
         {
-            if(!EnvironmentHelper.IsDevelopment()) return [];
-            
+            if (!EnvironmentHelper.IsDevelopment()) return [];
+
             await Task.Delay(500, cancellationToken);
             return _configuration.Provider1Flights
                 .Where(f => f.Departure == departure
@@ -28,8 +28,8 @@ namespace FlightAggregator.Providers.ExternalProviders
 
         public async Task<bool> BookFlightAsync(BookingRequest request, CancellationToken cancellationToken)
         {
-            if(!EnvironmentHelper.IsDevelopment()) return false;
-            
+            if (!EnvironmentHelper.IsDevelopment()) return false;
+
             await Task.Delay(500, cancellationToken);
             return true;
         }

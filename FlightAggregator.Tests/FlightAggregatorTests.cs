@@ -41,7 +41,7 @@ public class FlightAggregatorTests
         Assert.Contains(result, f => f.Id == "FP1-001");
         Assert.Contains(result, f => f.Id == "FP2-101");
     }
-    
+
     [Fact]
     public async Task BookFlightAsync_CallsCorrectProvider()
     {
@@ -70,6 +70,7 @@ public class FlightAggregatorTests
         // Assert
         Assert.True(result);
         mockProvider1.Verify(p => p.BookFlightAsync(bookingRequest, It.IsAny<CancellationToken>()), Times.Once);
-        mockProvider2.Verify(p => p.BookFlightAsync(It.IsAny<BookingRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+        mockProvider2.Verify(p => p.BookFlightAsync(It.IsAny<BookingRequest>(), It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 }

@@ -16,11 +16,11 @@ namespace FlightAggregator.Api.Controllers
     {
         [HttpGet]
         public async Task<IActionResult> GetFlights([FromQuery] string departure,
-                                                      [FromQuery] string destination,
-                                                      [FromQuery] DateTime date,
-                                                      [FromQuery] int maxStops,
-                                                      [FromQuery] decimal maxPrice,
-                                                      CancellationToken cancellationToken)
+            [FromQuery] string destination,
+            [FromQuery] DateTime date,
+            [FromQuery] int maxStops,
+            [FromQuery] decimal maxPrice,
+            CancellationToken cancellationToken)
         {
             var cacheKey = $"flights-{departure}-{destination}-{date:yyyyMMdd}";
             var cachedData = await cache.GetStringAsync(cacheKey, cancellationToken);
@@ -32,9 +32,9 @@ namespace FlightAggregator.Api.Controllers
                 flights = await aggregatorService.SearchFlightsAsync(departure, destination, date, cancellationToken);
 
                 flights = flights.Where(f => f.Stops <= maxStops && f.Price <= maxPrice)
-                                 .OrderBy(f => f.Price)
-                                 .ThenBy(f => f.Date)
-                                 .ToList();
+                    .OrderBy(f => f.Price)
+                    .ThenBy(f => f.Date)
+                    .ToList();
 
                 var options = new DistributedCacheEntryOptions
                 {
