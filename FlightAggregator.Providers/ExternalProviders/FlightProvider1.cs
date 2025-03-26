@@ -1,21 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FlightAggregator.Models.Configurations;
 using FlightAggregator.Models.ProviderModels;
 using FlightAggregator.Providers.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace FlightAggregator.Providers.ExternalProviders
 {
-    public class FlightProvider1 : IFlightProvider
+    public class FlightProvider1(IOptions<FlightConfiguration> options) : IFlightProvider
     {
-        public async Task<List<Flight>> GetFlightsAsync(string departure, string destination, DateTime date, CancellationToken cancellationToken)
+        private readonly FlightConfiguration _configuration = options.Value;
+
+        public async Task<List<Flight>> GetFlightsAsync(string departure, string destination, DateTime date,
+            CancellationToken cancellationToken)
         {
-            // Симулируем задержку ответа
-            await Task.Delay(1000, cancellationToken);
-            // В реальном случае можно фильтровать данные по параметрам запроса
-            return TestDataConfig.Provider1Flights;
+            await Task.Delay(500, cancellationToken);
+            return _configuration.Provider1Flights
+                .Where(f => f.Departure == departure
+                            && f.Destination == destination
+                            && f.Date.Date == date.Date).ToList();
         }
 
         public async Task<bool> BookFlightAsync(BookingRequest request, CancellationToken cancellationToken)

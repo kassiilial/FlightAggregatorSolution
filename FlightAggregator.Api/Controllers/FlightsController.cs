@@ -22,8 +22,8 @@ namespace FlightAggregator.Api.Controllers
                                                       [FromQuery] decimal maxPrice,
                                                       CancellationToken cancellationToken)
         {
-            string cacheKey = $"flights-{departure}-{destination}-{date:yyyyMMdd}-{maxStops}-{maxPrice}";
-            string cachedData = await cache.GetStringAsync(cacheKey, cancellationToken);
+            var cacheKey = $"flights-{departure}-{destination}-{date:yyyyMMdd}-{maxStops}-{maxPrice}";
+            var cachedData = await cache.GetStringAsync(cacheKey, cancellationToken);
             List<Flight> flights;
 
             if (string.IsNullOrEmpty(cachedData))
@@ -41,7 +41,7 @@ namespace FlightAggregator.Api.Controllers
                     SlidingExpiration = TimeSpan.FromMinutes(5)
                 };
 
-                string serializedFlights = JsonSerializer.Serialize(flights);
+                var serializedFlights = JsonSerializer.Serialize(flights);
                 await cache.SetStringAsync(cacheKey, serializedFlights, options, cancellationToken);
             }
             else

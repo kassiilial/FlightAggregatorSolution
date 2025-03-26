@@ -17,11 +17,11 @@ public class FlightAggregatorTests
 
         var flights1 = new List<Flight>
         {
-            new Flight("FP1-001", "Moscow", "Paris", DateTime.Today, 150, 0, "AirProvider1", "Provider1")
+            new("FP1-001", "Moscow", "Paris", DateTime.Today, 150, 0, "AirProvider1", "Provider1")
         };
         var flights2 = new List<Flight>
         {
-            new Flight("FP2-101", "Moscow", "Paris", DateTime.Today, 180, 0, "AirProvider2", "Provider2")
+            new("FP2-101", "Moscow", "Paris", DateTime.Today, 180, 0, "AirProvider2", "Provider2")
         };
 
         mockProvider1.Setup(p => p.GetFlightsAsync("Moscow", "Paris", DateTime.Today, It.IsAny<CancellationToken>()))
