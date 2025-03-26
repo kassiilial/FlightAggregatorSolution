@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightAggregator.Tests", "F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightAggregator.Api", "FlightAggregator.Api\FlightAggregator.Api.csproj", "{6BFD23A2-FB4C-B72D-7E70-4DB0053A3FC4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DD7E88BB-E39A-4E78-9AFA-4DFEE3C5B7D1}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +47,5 @@ Global
 		SolutionGuid = {2B0CFDC5-C18A-4CE5-8E1A-BFDAEA92476E}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{AAE671F1-E222-4FCD-B8BA-FE6121397E04} = {DD7E88BB-E39A-4E78-9AFA-4DFEE3C5B7D1}
 	EndGlobalSection
 EndGlobal
