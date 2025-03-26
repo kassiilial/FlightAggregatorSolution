@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FlightAggregator.Models.Configurations;
-using FlightAggregator.Models.Entities;
+using FlightAggregator.Models.ProviderModels;
 using FlightAggregator.Providers.Interfaces;
 
 namespace FlightAggregator.Providers.ExternalProviders

@@ -1,5 +1,4 @@
-﻿using FlightAggregator.Business;
-using FlightAggregator.Business.Services;
+﻿using FlightAggregator.Services;
 using FlightAggregator.Providers.ExternalProviders;
 using FlightAggregator.Providers.Interfaces;
 

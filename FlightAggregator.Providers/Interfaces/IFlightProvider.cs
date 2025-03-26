@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FlightAggregator.Models.Entities;
+using FlightAggregator.Models.ProviderModels;
 
 namespace FlightAggregator.Providers.Interfaces;
 

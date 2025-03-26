@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35919.96 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightAggregator.Business", "FlightAggregator.Business\FlightAggregator.Business.csproj", "{61570531-5CD8-4074-B3E2-057FF6996420}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightAggregator.Services", "FlightAggregator.Services\FlightAggregator.Services.csproj", "{61570531-5CD8-4074-B3E2-057FF6996420}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightAggregator.Providers", "FlightAggregator.Providers\FlightAggregator.Providers.csproj", "{AAE671F1-E222-4FCD-B8BA-FE6121397E04}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightAggregator.Tests", "FlightAggregator.Tests\FlightAggregator.Tests.csproj", "{8B67F2D9-FCC7-4CFA-A839-B25A2B04104C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightAggregator.Api", "FlightAggregator.Api\FlightAggregator.Api.csproj", "{6BFD23A2-FB4C-B72D-7E70-4DB0053A3FC4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{DD7E88BB-E39A-4E78-9AFA-4DFEE3C5B7D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,5 +47,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2B0CFDC5-C18A-4CE5-8E1A-BFDAEA92476E}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AAE671F1-E222-4FCD-B8BA-FE6121397E04} = {DD7E88BB-E39A-4E78-9AFA-4DFEE3C5B7D1}
 	EndGlobalSection
 EndGlobal

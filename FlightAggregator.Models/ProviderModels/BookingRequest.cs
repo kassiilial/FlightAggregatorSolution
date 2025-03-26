@@ -1,6 +1,4 @@
-using System;
-
-namespace FlightAggregator.Models.Entities;
+namespace FlightAggregator.Models.ProviderModels;
 
 public record BookingRequest(
         string FlightId,

@@ -1,18 +1,17 @@
-using FlightAggregator.Business.Services;
-using FlightAggregator.Models.Entities;
+using FlightAggregator.Models.ProviderModels;
 using FlightAggregator.Providers.Interfaces;
+using FlightAggregator.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace FlightAggregator.Tests;
 
-
 public class FlightAggregatorTests
 {
-[Fact]
+    [Fact]
     public async Task SearchFlightsAsync_ReturnsAggregatedFlights()
     {
-        // Arrange: создаем фиктивные провайдеры
+        // Arrange
         var mockProvider1 = new Mock<IFlightProvider>();
         var mockProvider2 = new Mock<IFlightProvider>();
 

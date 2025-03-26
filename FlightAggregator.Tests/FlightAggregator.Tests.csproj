@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FlightAggregator.Business\FlightAggregator.Business.csproj" />
+    <ProjectReference Include="..\FlightAggregator.Services\FlightAggregator.Services.csproj" />
     <ProjectReference Include="..\FlightAggregator.Models\FlightAggregator.Models.csproj" />
     <ProjectReference Include="..\FlightAggregator.Providers\FlightAggregator.Providers.csproj" />
   </ItemGroup>

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace FlightAggregator.Models.Entities
+namespace FlightAggregator.Models.ProviderModels
 {
     public record Flight(
          string Id,
@@ -12,6 +10,6 @@ namespace FlightAggregator.Models.Entities
          decimal Price,
          int Stops,
          string Airline,
-         string Provider  // источник данных
+         string Provider
      );
 }
