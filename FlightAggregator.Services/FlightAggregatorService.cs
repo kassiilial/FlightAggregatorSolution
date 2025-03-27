@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +8,6 @@ using FlightAggregator.Models.ProviderModels;
 using FlightAggregator.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
-using Polly;
 
 namespace FlightAggregator.Services;
 
@@ -32,7 +30,7 @@ public class FlightAggregatorService(IEnumerable<IFlightProvider> providers, ILo
             if (!string.IsNullOrEmpty(cachedData))
             {
                 logger.LogInformation("Cache hit for key: {CacheKey}", cacheKey);
-                return JsonSerializer.Deserialize<List<Flight>>(cachedData);
+                return JsonSerializer.Deserialize<List<Flight>>(cachedData) ?? [];
             }
 
             logger.LogInformation("Cache miss for key: {CacheKey}", cacheKey);

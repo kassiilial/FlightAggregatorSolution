@@ -40,7 +40,7 @@ namespace FlightAggregator.Tests
 
             mockCache
                 .Setup(c => c.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((byte[])null);
+                .ReturnsAsync([]);
 
             var service = new FlightAggregatorService(providers, logger, mockCache.Object);
 
@@ -84,7 +84,7 @@ namespace FlightAggregator.Tests
 
             mockCache
                 .Setup(c => c.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((byte[])null);
+                .ReturnsAsync([]);
 
             var aggregatorService = new FlightAggregatorService(providers, logger, mockCache.Object);
 

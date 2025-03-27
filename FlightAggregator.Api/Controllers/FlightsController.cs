@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
-using System.Text.Json;
-using FlightAggregator.Models.ProviderModels;
 using FlightAggregator.Services;
 
 namespace FlightAggregator.Api.Controllers
@@ -9,8 +6,7 @@ namespace FlightAggregator.Api.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class FlightsController(
-        IFlightAggregatorService aggregatorService,
-        ILogger<FlightsController> logger)
+        IFlightAggregatorService aggregatorService)
         : ControllerBase
     {
         [HttpGet]
