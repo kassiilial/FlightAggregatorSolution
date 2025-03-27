@@ -14,6 +14,8 @@ namespace FlightAggregator.Providers.ExternalProviders
     {
         private readonly FlightConfiguration _configuration = options.Value;
 
+        public string ProviderName => "Provider2";
+        
         public async Task<List<Flight>> GetFlightsAsync(string departure, string destination, DateTime date,
             CancellationToken cancellationToken)
         {

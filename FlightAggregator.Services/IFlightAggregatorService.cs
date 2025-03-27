@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using FlightAggregator.Models.ProviderModels;
@@ -8,8 +9,14 @@ namespace FlightAggregator.Services;
 
 public interface IFlightAggregatorService
 {
-    Task<List<Flight>> SearchFlightsAsync(string departure, string destination, DateTime date,
+    Task<List<Flight>> SearchFlightsAsync(string departure,
+        string destination,
+        DateTime date,
+        int? maxStops,
+        decimal? maxPrice,
+        string? airline,
+        string? sortBy,
         CancellationToken cancellationToken);
-
+    
     Task<bool> BookFlightAsync(BookingRequest request, CancellationToken cancellationToken);
 }
