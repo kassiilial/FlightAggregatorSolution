@@ -13,6 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightAggregator.Tests", "F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlightAggregator.Api", "FlightAggregator.Api\FlightAggregator.Api.csproj", "{6BFD23A2-FB4C-B72D-7E70-4DB0053A3FC4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "For Additional File", "For Additional File", "{C8BA70BF-F8EF-4BD8-8933-3EC9B0C44C07}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

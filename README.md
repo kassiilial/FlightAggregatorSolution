@@ -1,10 +1,9 @@
 Flight Aggregator API
+
 📋 Overview
 Flight Aggregator API — это REST‑сервис на .NET 8, который собирает доступные рейсы из нескольких источников (провайдеров), предоставляет единый унифицированный ответ с возможностью фильтрации, сортировки и кэширования, а также позволяет бронировать выбранные рейсы.
 
 🏗 Architecture
-java
-Копировать
 FlightAggregatorSolution
 │
 ├── FlightAggregator.Api           ← ASP.NET Core Web API (Controllers → Endpoints)
@@ -16,6 +15,8 @@ FlightAggregatorSolution
 ├── FlightAggregator.Models        ← DTOs / Records (Flight, BookingRequest) + Configurations
 │
 └── FlightAggregator.Tests         ← xUnit Unit Tests
+
+
 API Layer: обрабатывает HTTP‑запросы, делегирует логику сервисам и возвращает JSON‑ответы.
 
 Business Layer: агрегирует данные, применяет фильтрацию/сортировку и кеширует результаты через IDistributedCache.
@@ -24,7 +25,6 @@ Providers Layer: каждый провайдер реализует IFlightProvi
 
 Models: доменные сущности и конфигурация тестовых данных.
 
-Logging: Serilog → файл logs/log.txt (UseSerilogRequestLogging).
 
 ⚙️ Getting Started
 Prerequisites
@@ -67,10 +67,11 @@ Response:
 
 400 Bad Request → { "Message": "Ошибка бронирования" }
 
+
 📦 Caching
 IDistributedCache с sliding expiration 5 мин.
-
 Ключ = комбинация всех входных параметров запроса.
+
 
 📑 Logging
 Serilog → файл logs/log.txt
@@ -85,11 +86,11 @@ HTTP request logging через app.UseSerilogRequestLogging()
 bash
 cd FlightAggregator.Tests
 dotnet test
+
 Покрытие:
-
 Агрегация поиска
-
 Правильный выбор провайдера при бронировании
+
 
 🚧 Future Improvements
 Интеграция с реальными API провайдеров
