@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using FlightAggregator.Services;
 
@@ -11,9 +12,9 @@ namespace FlightAggregator.Api.Controllers
     {
         [HttpGet]
         public async Task<IActionResult> GetFlights(
-            [FromQuery] string departure,
-            [FromQuery] string destination,
-            [FromQuery] DateTime date,
+            [FromQuery, Required] string departure,
+            [FromQuery, Required] string destination,
+            [FromQuery, Required] DateTime date,
             [FromQuery] int? maxStops,
             [FromQuery] decimal? maxPrice,
             [FromQuery] string? airline,

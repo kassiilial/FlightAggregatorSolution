@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FlightAggregator.Models;
 using FlightAggregator.Models.Configurations;
 using FlightAggregator.Models.ProviderModels;
 using FlightAggregator.Providers.Interfaces;
@@ -22,10 +23,23 @@ namespace FlightAggregator.Providers.ExternalProviders
             if (!EnvironmentHelper.IsDevelopment()) return [];
 
             await Task.Delay(500, cancellationToken);
-            return _configuration.Provider1Flights
+            var flightsFromProvider = _configuration.Provider1Flights
                 .Where(f => f.Departure == departure
                             && f.Destination == destination
                             && f.Date.Date == date.Date).ToList();
+            
+            return flightsFromProvider.Select(flight => new Flight
+                {
+                    FlightNumber = flight.FlightNumber,
+                    Departure = flight.Departure,
+                    Destination = flight.Destination,
+                    Date = flight.Date,
+                    Price = flight.Price,
+                    Stops = flight.Stops,
+                    Airline = flight.Airline,
+                    Provider = ProviderName
+                })
+                .ToList();
         }
 
         public async Task<bool> BookFlightAsync(BookingRequest request, CancellationToken cancellationToken)

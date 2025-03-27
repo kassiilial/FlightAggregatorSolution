@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using FlightAggregator.Models;
 using FlightAggregator.Models.ProviderModels;
 using FlightAggregator.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;

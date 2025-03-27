@@ -1,3 +1,4 @@
+using FlightAggregator.Models;
 using FlightAggregator.Models.ProviderModels;
 using FlightAggregator.Providers.Interfaces;
 using FlightAggregator.Services;
@@ -21,16 +22,39 @@ namespace FlightAggregator.Tests
 
             var flights1 = new List<Flight>
             {
-                new("FP1-001", "Moscow", "Paris", DateTime.Today, 150, 0, "AirProvider1", "Provider1")
-            };
-            var flights2 = new List<Flight>
-            {
-                new("FP2-101", "Moscow", "Paris", DateTime.Today, 180, 0, "AirProvider2", "Provider2")
+                new()
+                {
+                    FlightNumber = "FP1-001",
+                    Departure = "Moscow",
+                    Destination = "Paris",
+                    Date = DateTime.Today,
+                    Price = 150m,
+                    Stops = 0,
+                    Airline = "AirProvider1",
+                    Provider = "Provider1"
+                }
             };
 
-            mockProvider1.Setup(p => p.GetFlightsAsync("Moscow", "Paris", DateTime.Today, It.IsAny<CancellationToken>()))
+            var flights2 = new List<Flight>
+            {
+                new()
+                {
+                    FlightNumber = "FP2-101",
+                    Departure = "Moscow",
+                    Destination = "Paris",
+                    Date = DateTime.Today,
+                    Price = 180m,
+                    Stops = 0,
+                    Airline = "AirProvider2",
+                    Provider = "Provider2"
+                }
+            };
+
+            mockProvider1
+                .Setup(p => p.GetFlightsAsync("Moscow", "Paris", DateTime.Today, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(flights1);
-            mockProvider2.Setup(p => p.GetFlightsAsync("Moscow", "Paris", DateTime.Today, It.IsAny<CancellationToken>()))
+            mockProvider2
+                .Setup(p => p.GetFlightsAsync("Moscow", "Paris", DateTime.Today, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(flights2);
 
             var providers = new List<IFlightProvider> { mockProvider1.Object, mockProvider2.Object };
@@ -52,8 +76,8 @@ namespace FlightAggregator.Tests
 
             // Assert
             Assert.Equal(2, result.Count);
-            Assert.Contains(result, f => f.Id == "FP1-001");
-            Assert.Contains(result, f => f.Id == "FP2-101");
+            Assert.Contains(result, f => f.FlightNumber == "FP1-001");
+            Assert.Contains(result, f => f.FlightNumber == "FP2-101");
         }
 
         [Fact]
@@ -94,7 +118,8 @@ namespace FlightAggregator.Tests
             // Assert
             Assert.True(result);
             mockProvider1.Verify(p => p.BookFlightAsync(bookingRequest, It.IsAny<CancellationToken>()), Times.Once);
-            mockProvider2.Verify(p => p.BookFlightAsync(It.IsAny<BookingRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+            mockProvider2.Verify(p => p.BookFlightAsync(It.IsAny<BookingRequest>(), It.IsAny<CancellationToken>()),
+                Times.Never);
         }
     }
 }

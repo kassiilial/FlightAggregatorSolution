@@ -2,14 +2,13 @@
 
 namespace FlightAggregator.Models.ProviderModels
 {
-    public record Flight(
-        string Id,
+    public record FlightFromProvider(
+        string FlightNumber,
         string Departure,
         string Destination,
         DateTime Date,
         decimal Price,
         int Stops,
-        string Airline,
-        string Provider
+        string Airline
     );
 }

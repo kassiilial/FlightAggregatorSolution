@@ -15,6 +15,7 @@ builder.Host.UseSerilog();
 
 builder.Services.Configure<FlightConfiguration>(
     builder.Configuration.GetSection("TestFlights"));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
