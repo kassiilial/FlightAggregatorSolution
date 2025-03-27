@@ -1,8 +1,10 @@
-﻿using FlightAggregator.Models.Configurations;
+﻿using FlightAggregator.Api.Specification;
+using FlightAggregator.Models.Configurations;
 using FlightAggregator.Providers.ExternalProviders;
 using FlightAggregator.Providers.Interfaces;
 using FlightAggregator.Services;
 using Serilog;
+using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,11 @@ builder.Services.Configure<FlightConfiguration>(
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.ExampleFilters();
+});
+builder.Services.AddSwaggerExamplesFromAssemblyOf<FlightRequestExample>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddTransient<IFlightAggregatorService, FlightAggregatorService>();
 builder.Services.AddTransient<IFlightProvider, FlightProvider1>();
