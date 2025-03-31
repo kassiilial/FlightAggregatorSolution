@@ -23,7 +23,7 @@ public class FlightProvider2(
 {
     private readonly FlightConfiguration _configuration = options.Value;
 
-    public string ProviderName => "Provider1";
+    public string ProviderName => "Provider2";
 
     public async IAsyncEnumerable<Flight> GetFlightsAsync(
         string departure,
@@ -46,7 +46,7 @@ public class FlightProvider2(
 
         logger.LogInformation("Cache miss for key {CacheKey}", cacheKey);
 
-        await Task.Delay(1000, cancellationToken);
+        await Task.Delay(2000, cancellationToken);
 
         var flightsFromProvider = _configuration.Provider1Flights
             .Where(f => f.Departure == departure
