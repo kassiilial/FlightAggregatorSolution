@@ -81,12 +81,16 @@ HTTP request logging через app.UseSerilogRequestLogging()
 Логи ошибок и cache hits/misses.
 
 ✅ Testing
-Запуск unit‑тестов:
+1. Запуск unit‑тестов:
 
 bash
 cd FlightAggregator.Tests
 dotnet test
 
+2. Curl
+curl -X POST "https://localhost:44310/api/Flights/stream" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"flightNumber\":\"\",\"departure\":\"Moscow\",\"destination\":\"Paris\",\"date\":\"2025-04-10T00:00:00\",\"price\":0,\"stops\":0,\"airline\":\"\",\"provider\":\"\"}"
+
+   
 Покрытие:
 Агрегация поиска
 Правильный выбор провайдера при бронировании

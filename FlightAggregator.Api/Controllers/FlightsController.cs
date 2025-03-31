@@ -12,11 +12,12 @@ namespace FlightAggregator.Api.Controllers;
         IFlightAggregatorService aggregatorService)
         : ControllerBase
     {
-        [HttpPost]
+        [HttpPost("stream")]
+        [Produces("application/json")]
         [SwaggerRequestExample(typeof(FlightSearchRequest), typeof(FlightRequestExample))]
-        public async Task<IActionResult> SearchFlights([FromBody] FlightSearchRequest request, CancellationToken cancellationToken)
+        public IAsyncEnumerable<Flight> SearchFlights([FromBody] FlightSearchRequest request, CancellationToken cancellationToken)
         {
-            var flights = await aggregatorService.SearchFlightsAsync(
+            return aggregatorService.SearchFlightsAsync(
                 request.Departure,
                 request.Destination,
                 request.Date!.Value,
@@ -25,8 +26,6 @@ namespace FlightAggregator.Api.Controllers;
                 request.Airline,
                 request.SortBy,
                 cancellationToken);
-
-            return Ok(flights);
         }
     }
 

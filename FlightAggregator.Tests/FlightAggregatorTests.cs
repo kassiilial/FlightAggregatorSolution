@@ -52,27 +52,27 @@ namespace FlightAggregator.Tests
 
             mockProvider1
                 .Setup(p => p.GetFlightsAsync("Moscow", "Paris", DateTime.Today, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(flights1);
+                .Returns((string departure, string destination, DateTime date, CancellationToken token) => flights1.ToAsyncEnumerable());
             mockProvider2
                 .Setup(p => p.GetFlightsAsync("Moscow", "Paris", DateTime.Today, It.IsAny<CancellationToken>()))
-                .ReturnsAsync(flights2);
+                .Returns((string departure, string destination, DateTime date, CancellationToken token) => flights2.ToAsyncEnumerable());
+
 
             var providers = new List<IFlightProvider> { mockProvider1.Object, mockProvider2.Object };
             var logger = Mock.Of<ILogger<FlightAggregatorService>>();
-
-            var mockCache = new Mock<IDistributedCache>();
-
-            mockCache
-                .Setup(c => c.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync([]);
-
-            var service = new FlightAggregatorService(providers, logger, mockCache.Object);
+            
+            var service = new FlightAggregatorService(providers, logger);
 
             // Act
-            var result = await service.SearchFlightsAsync(
-                "Moscow", "Paris", DateTime.Today,
-                maxStops: null, maxPrice: null, airline: null, sortBy: null,
-                CancellationToken.None);
+            var result = new List<Flight>();
+            await foreach (var flight in service.SearchFlightsAsync(
+                               "Moscow", "Paris", DateTime.Today,
+                               maxStops: null, maxPrice: null, airline: null, sortBy: null,
+                               CancellationToken.None))
+            {
+                result.Add(flight);
+            }
+
 
             // Assert
             Assert.Equal(2, result.Count);
@@ -103,14 +103,8 @@ namespace FlightAggregator.Tests
 
             var providers = new List<IFlightProvider> { mockProvider1.Object, mockProvider2.Object };
             var logger = Mock.Of<ILogger<FlightAggregatorService>>();
-
-            var mockCache = new Mock<IDistributedCache>();
-
-            mockCache
-                .Setup(c => c.GetAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync([]);
-
-            var aggregatorService = new FlightAggregatorService(providers, logger, mockCache.Object);
+            
+            var aggregatorService = new FlightAggregatorService(providers, logger);
 
             // Act
             var result = await aggregatorService.BookFlightAsync(bookingRequest, CancellationToken.None);

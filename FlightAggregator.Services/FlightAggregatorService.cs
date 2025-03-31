@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,73 +11,91 @@ using FlightAggregator.Providers.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 
-namespace FlightAggregator.Services;
-
-public class FlightAggregatorService(IEnumerable<IFlightProvider> providers, ILogger<FlightAggregatorService> logger, IDistributedCache cache)
-    : IFlightAggregatorService
+namespace FlightAggregator.Services
 {
-    public async Task<List<Flight>> SearchFlightsAsync(
-            string departure, 
-            string destination, 
+    public class FlightAggregatorService(
+        IEnumerable<IFlightProvider> providers,
+        ILogger<FlightAggregatorService> logger)
+        : IFlightAggregatorService
+    {
+        public async Task<bool> BookFlightAsync(BookingRequest request, CancellationToken cancellationToken)
+        {
+            var provider = providers
+                .FirstOrDefault(p => p.ProviderName.Equals(request.Provider, StringComparison.OrdinalIgnoreCase));
+
+            if (provider == null)
+            {
+                logger.LogWarning("Не найден провайдер для рейса {FlightId}", request.FlightId);
+                return false;
+            }
+
+            return await provider.BookFlightAsync(request, cancellationToken);
+        }
+
+        public async IAsyncEnumerable<Flight> SearchFlightsAsync(
+            string departure,
+            string destination,
             DateTime date,
             int? maxStops,
             decimal? maxPrice,
             string? airline,
             string? sortBy,
-            CancellationToken cancellationToken)
+            [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var cacheKey = $"flights-{departure}-{destination}-{date:yyyyMMdd}-{maxStops}-{maxPrice}-{airline}-{sortBy}";
-            var cachedData = await cache.GetStringAsync(cacheKey, cancellationToken);
+            var flightStreams = providers
+                .Select(provider => provider.GetFlightsAsync(departure, destination, date, cancellationToken))
+                .ToList();
 
-            if (!string.IsNullOrEmpty(cachedData))
+            if (string.IsNullOrWhiteSpace(sortBy))
             {
-                logger.LogInformation("Cache hit for key: {CacheKey}", cacheKey);
-                return JsonSerializer.Deserialize<List<Flight>>(cachedData) ?? [];
+                foreach (var flightStream in flightStreams)
+                {
+                    await foreach (var flight in flightStream.WithCancellation(cancellationToken))
+                    {
+                        if (FilterFlight(flight, maxStops, maxPrice, airline))
+                            yield return flight;
+                    }
+                }
             }
-
-            logger.LogInformation("Cache miss for key: {CacheKey}", cacheKey);
-
-            var tasks = providers.Select(provider =>
-                provider.GetFlightsAsync(departure, destination, date, cancellationToken));
-            var results = await Task.WhenAll(tasks);
-
-            var allFlights = results.SelectMany(flights => flights);
-            if (maxStops.HasValue)
-                allFlights = allFlights.Where(f => f.Stops <= maxStops.Value);
-            if (maxPrice.HasValue)
-                allFlights = allFlights.Where(f => f.Price <= maxPrice.Value);
-            if (!string.IsNullOrWhiteSpace(airline))
-                allFlights = allFlights.Where(f => f.Airline.Equals(airline, StringComparison.OrdinalIgnoreCase));
-
-            allFlights = sortBy?.ToLower() switch
+            else
             {
-                "price" => allFlights.OrderBy(f => f.Price),
-                "stops" => allFlights.OrderBy(f => f.Stops),
-                "date" => allFlights.OrderBy(f => f.Date),
-                _ => allFlights.OrderBy(f => f.Price).ThenBy(f => f.Date)
-            };
+                // Для сортировки необходимо буферизовать все данные
+                var allFlights = new List<Flight>();
+                foreach (var flightStream in flightStreams)
+                {
+                    await foreach (var flight in flightStream.WithCancellation(cancellationToken))
+                    {
+                        if (FilterFlight(flight, maxStops, maxPrice, airline))
+                            allFlights.Add(flight);
+                    }
+                }
 
-            var flightsList = allFlights.ToList();
+                // Применяем сортировку
+                allFlights = sortBy.ToLower() switch
+                {
+                    "price" => allFlights.OrderBy(f => f.Price).ToList(),
+                    "stops" => allFlights.OrderBy(f => f.Stops).ToList(),
+                    "date" => allFlights.OrderBy(f => f.Date).ToList(),
+                    _ => allFlights.OrderBy(f => f.Price).ThenBy(f => f.Date).ToList()
+                };
 
-            var options = new DistributedCacheEntryOptions
-            {
-                SlidingExpiration = TimeSpan.FromMinutes(5)
-            };
-            await cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(flightsList), options, cancellationToken);
-
-            return flightsList;
+                foreach (var flight in allFlights)
+                {
+                    yield return flight;
+                }
+            }
         }
-    
-    public async Task<bool> BookFlightAsync(BookingRequest request, CancellationToken cancellationToken)
-    {
-        var provider = providers.FirstOrDefault(p => p.ProviderName.Equals(request.Provider, StringComparison.OrdinalIgnoreCase));
-        
-        if (provider == null)
+
+        private bool FilterFlight(Flight flight, int? maxStops, decimal? maxPrice, string? airline)
         {
-            logger.LogWarning("Не найден провайдер для рейса {FlightId}", request.FlightId);
-            return false;
+            if (maxStops.HasValue && flight.Stops > maxStops.Value)
+                return false;
+            if (maxPrice.HasValue && flight.Price > maxPrice.Value)
+                return false;
+            if (!string.IsNullOrWhiteSpace(airline) &&
+                !flight.Airline.Equals(airline, StringComparison.OrdinalIgnoreCase))
+                return false;
+            return true;
         }
-
-        return await provider.BookFlightAsync(request, cancellationToken);
     }
 }

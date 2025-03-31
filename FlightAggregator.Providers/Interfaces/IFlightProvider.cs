@@ -11,7 +11,7 @@ public interface IFlightProvider
 {
     string ProviderName { get; }
     
-    Task<List<Flight>> GetFlightsAsync(string departure, string destination, DateTime date,
+    IAsyncEnumerable<Flight> GetFlightsAsync(string departure, string destination, DateTime date,
         CancellationToken cancellationToken);
 
     Task<bool> BookFlightAsync(BookingRequest request, CancellationToken cancellationToken);
