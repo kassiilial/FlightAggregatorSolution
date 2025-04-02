@@ -1,5 +1,6 @@
 ﻿using FlightAggregator.Api.Specification;
 using FlightAggregator.Models.Configurations;
+using FlightAggregator.Providers;
 using FlightAggregator.Providers.ExternalProviders;
 using FlightAggregator.Providers.Interfaces;
 using FlightAggregator.Services;
@@ -29,6 +30,7 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddTransient<IFlightAggregatorService, FlightAggregatorService>();
 builder.Services.AddTransient<IFlightProvider, FlightProvider1>();
 builder.Services.AddTransient<IFlightProvider, FlightProvider2>();
+builder.Services.AddTransient<CacheHelper>();
 
 var app = builder.Build();
 

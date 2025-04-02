@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using FlightAggregator.Models;
 using FlightAggregator.Models.ProviderModels;
 using FlightAggregator.Providers.Interfaces;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 
 namespace FlightAggregator.Services
@@ -59,7 +57,6 @@ namespace FlightAggregator.Services
             }
             else
             {
-                // Для сортировки необходимо буферизовать все данные
                 var allFlights = new List<Flight>();
                 foreach (var flightStream in flightStreams)
                 {
@@ -70,7 +67,6 @@ namespace FlightAggregator.Services
                     }
                 }
 
-                // Применяем сортировку
                 allFlights = sortBy.ToLower() switch
                 {
                     "price" => allFlights.OrderBy(f => f.Price).ToList(),

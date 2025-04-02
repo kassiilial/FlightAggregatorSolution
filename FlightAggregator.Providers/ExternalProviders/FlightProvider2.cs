@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using FlightAggregator.Models;
 using FlightAggregator.Models.Configurations;
 using FlightAggregator.Models.ProviderModels;
 using FlightAggregator.Providers.Interfaces;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -17,7 +15,7 @@ namespace FlightAggregator.Providers.ExternalProviders;
 
 public class FlightProvider2(
     IOptions<FlightConfiguration> options,
-    IDistributedCache cache,
+    CacheHelper cache,
     ILogger<FlightProvider2> logger)
     : IFlightProvider
 {
@@ -31,9 +29,9 @@ public class FlightProvider2(
         DateTime date,
         [EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        var cacheKey = GetCacheKey(departure, destination, date);
+        var cacheKey = cache.GetCacheKey(ProviderName, departure, destination, date);
 
-        var cachedFlights = await GetFlightsFromCacheAsync(cacheKey, cancellationToken);
+        var cachedFlights = await cache.GetFlightsFromCacheAsync(cacheKey, cancellationToken);
         if (cachedFlights is { Count: > 0 })
         {
             logger.LogInformation("Cache hit for key {CacheKey}", cacheKey);
@@ -73,7 +71,7 @@ public class FlightProvider2(
 
         if (flights.Any())
         {
-            await SetFlightsToCacheAsync(cacheKey, flights, cancellationToken);
+            await cache.SetFlightsToCacheAsync(cacheKey, flights, cancellationToken);
         }
     }
 
@@ -84,38 +82,5 @@ public class FlightProvider2(
 
         await Task.Delay(500, cancellationToken);
         return true;
-    }
-
-    private string GetCacheKey(string departure, string destination, DateTime date)
-    {
-        return $"{ProviderName}-flights-{departure}-{destination}-{date:yyyyMMdd}";
-    }
-
-    private async Task<List<Flight>?> GetFlightsFromCacheAsync(string cacheKey, CancellationToken cancellationToken)
-    {
-        var cachedData = await cache.GetStringAsync(cacheKey, cancellationToken);
-        if (!string.IsNullOrEmpty(cachedData))
-        {
-            try
-            {
-                return JsonSerializer.Deserialize<List<Flight>>(cachedData);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Ошибка десериализации данных из кэша по ключу {CacheKey}", cacheKey);
-            }
-        }
-        return null;
-    }
-        
-    private async Task SetFlightsToCacheAsync(string cacheKey, List<Flight> flights, CancellationToken cancellationToken)
-    {
-        var options = new DistributedCacheEntryOptions
-        {
-            SlidingExpiration = TimeSpan.FromMinutes(5)
-        };
-
-        var data = JsonSerializer.Serialize(flights);
-        await cache.SetStringAsync(cacheKey, data, options, cancellationToken);
     }
 }

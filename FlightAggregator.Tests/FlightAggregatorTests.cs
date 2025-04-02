@@ -2,7 +2,6 @@ using FlightAggregator.Models;
 using FlightAggregator.Models.ProviderModels;
 using FlightAggregator.Providers.Interfaces;
 using FlightAggregator.Services;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Moq;
 
