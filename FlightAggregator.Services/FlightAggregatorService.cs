@@ -30,7 +30,7 @@ namespace FlightAggregator.Services
             return await provider.BookFlightAsync(request, cancellationToken);
         }
 
-        public async IAsyncEnumerable<Flight> SearchFlightsAsync(
+        public async IAsyncEnumerable<List<Flight>> SearchFlightsAsync(
             string departure,
             string destination,
             DateTime date,
@@ -40,58 +40,28 @@ namespace FlightAggregator.Services
             string? sortBy,
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            var flightStreams = providers
+            var flightTasks = providers
                 .Select(provider => provider.GetFlightsAsync(departure, destination, date, cancellationToken))
                 .ToList();
 
             if (string.IsNullOrWhiteSpace(sortBy))
             {
-                foreach (var flightStream in flightStreams)
+                while (flightTasks.Any())
                 {
-                    await foreach (var flight in flightStream.WithCancellation(cancellationToken))
-                    {
-                        if (FilterFlight(flight, maxStops, maxPrice, airline))
-                            yield return flight;
-                    }
+                    var flightTask = await Task.WhenAny(flightTasks);
+                    flightTasks.Remove(flightTask);
+                    yield return flightTask.Result;
                 }
             }
             else
             {
-                var allFlights = new List<Flight>();
-                foreach (var flightStream in flightStreams)
+                while (flightTasks.Any())
                 {
-                    await foreach (var flight in flightStream.WithCancellation(cancellationToken))
-                    {
-                        if (FilterFlight(flight, maxStops, maxPrice, airline))
-                            allFlights.Add(flight);
-                    }
-                }
-
-                allFlights = sortBy.ToLower() switch
-                {
-                    "price" => allFlights.OrderBy(f => f.Price).ToList(),
-                    "stops" => allFlights.OrderBy(f => f.Stops).ToList(),
-                    "date" => allFlights.OrderBy(f => f.Date).ToList(),
-                    _ => allFlights.OrderBy(f => f.Price).ThenBy(f => f.Date).ToList()
-                };
-
-                foreach (var flight in allFlights)
-                {
-                    yield return flight;
+                    var flightTask = await Task.WhenAny(flightTasks);
+                    flightTasks.Remove(flightTask);
+                    yield return flightTask.Result;
                 }
             }
-        }
-
-        private bool FilterFlight(Flight flight, int? maxStops, decimal? maxPrice, string? airline)
-        {
-            if (maxStops.HasValue && flight.Stops > maxStops.Value)
-                return false;
-            if (maxPrice.HasValue && flight.Price > maxPrice.Value)
-                return false;
-            if (!string.IsNullOrWhiteSpace(airline) &&
-                !flight.Airline.Equals(airline, StringComparison.OrdinalIgnoreCase))
-                return false;
-            return true;
         }
     }
 }

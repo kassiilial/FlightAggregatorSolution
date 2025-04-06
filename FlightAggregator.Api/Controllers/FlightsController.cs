@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using FlightAggregator.Api.Specification;
 using FlightAggregator.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -15,17 +16,20 @@ namespace FlightAggregator.Api.Controllers;
         [HttpPost("stream")]
         [Produces("application/json")]
         [SwaggerRequestExample(typeof(FlightSearchRequest), typeof(FlightRequestExample))]
-        public IAsyncEnumerable<Flight> SearchFlights([FromBody] FlightSearchRequest request, CancellationToken cancellationToken)
+        public async IAsyncEnumerable<List<Flight>> SearchFlights([FromBody] FlightSearchRequest request, [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            return aggregatorService.SearchFlightsAsync(
-                request.Departure,
-                request.Destination,
-                request.Date!.Value,
-                request.MaxStops,
-                request.MaxPrice,
-                request.Airline,
-                request.SortBy,
-                cancellationToken);
+             await foreach (var flights in aggregatorService.SearchFlightsAsync(
+                                      request.Departure,
+                                      request.Destination,
+                                      request.Date!.Value,
+                                      request.MaxStops,
+                                      request.MaxPrice,
+                                      request.Airline,
+                                      request.SortBy,
+                                      cancellationToken))
+            {
+                yield return flights;
+            }
         }
     }
 

@@ -9,7 +9,7 @@ namespace FlightAggregator.Services;
 
 public interface IFlightAggregatorService
 {
-    IAsyncEnumerable<Flight> SearchFlightsAsync(string departure,
+    IAsyncEnumerable<List<Flight>> SearchFlightsAsync(string departure,
         string destination,
         DateTime date,
         int? maxStops,

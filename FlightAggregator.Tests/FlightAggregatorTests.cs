@@ -51,10 +51,10 @@ namespace FlightAggregator.Tests
 
             mockProvider1
                 .Setup(p => p.GetFlightsAsync("Moscow", "Paris", DateTime.Today, It.IsAny<CancellationToken>()))
-                .Returns((string departure, string destination, DateTime date, CancellationToken token) => flights1.ToAsyncEnumerable());
+                .Returns((string departure, string destination, DateTime date, CancellationToken token) => Task.FromResult(flights1));
             mockProvider2
                 .Setup(p => p.GetFlightsAsync("Moscow", "Paris", DateTime.Today, It.IsAny<CancellationToken>()))
-                .Returns((string departure, string destination, DateTime date, CancellationToken token) => flights2.ToAsyncEnumerable());
+                .Returns((string departure, string destination, DateTime date, CancellationToken token) => Task.FromResult(flights2));
 
 
             var providers = new List<IFlightProvider> { mockProvider1.Object, mockProvider2.Object };
@@ -69,7 +69,7 @@ namespace FlightAggregator.Tests
                                maxStops: null, maxPrice: null, airline: null, sortBy: null,
                                CancellationToken.None))
             {
-                result.Add(flight);
+                result.AddRange(flight);
             }
 
 

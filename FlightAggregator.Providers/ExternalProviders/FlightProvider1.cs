@@ -14,36 +14,19 @@ using Microsoft.Extensions.Options;
 namespace FlightAggregator.Providers.ExternalProviders;
 
 public class FlightProvider1(
-    IOptions<FlightConfiguration> options,
-    CacheHelper cache,
-    ILogger<FlightProvider1> logger)
+    IOptions<FlightConfiguration> options)
     : IFlightProvider
 {
     private readonly FlightConfiguration _configuration = options.Value;
 
     public string ProviderName => "Provider1";
 
-    public async IAsyncEnumerable<Flight> GetFlightsAsync(
+    public async Task<List<Flight>> GetFlightsAsync(
         string departure,
         string destination,
         DateTime date,
-        [EnumeratorCancellation] CancellationToken cancellationToken)
+        CancellationToken cancellationToken)
     {
-        var cacheKey = cache.GetCacheKey(ProviderName, departure, destination, date);
-
-        var cachedFlights = await cache.GetFlightsFromCacheAsync(cacheKey, cancellationToken);
-        if (cachedFlights is { Count: > 0 })
-        {
-            logger.LogInformation("Cache hit for key {CacheKey}", cacheKey);
-            foreach (var flight in cachedFlights)
-            {
-                yield return flight;
-            }
-            yield break;
-        }
-
-        logger.LogInformation("Cache miss for key {CacheKey}", cacheKey);
-
         await Task.Delay(500, cancellationToken);
 
         var flightsFromProvider = _configuration.Provider1Flights
@@ -51,10 +34,7 @@ public class FlightProvider1(
                         && f.Destination == destination
                         && f.Date.Date == date.Date);
 
-        var flights = new List<Flight>();
-        foreach (var flight in flightsFromProvider)
-        {
-            var flightItem = new Flight
+        return flightsFromProvider.Select(flight => new Flight
             {
                 FlightNumber = flight.FlightNumber,
                 Departure = flight.Departure,
@@ -64,15 +44,8 @@ public class FlightProvider1(
                 Stops = flight.Stops,
                 Airline = flight.Airline,
                 Provider = ProviderName
-            };
-            flights.Add(flightItem);
-            yield return flightItem;
-        }
-
-        if (flights.Any())
-        {
-            await cache.SetFlightsToCacheAsync(cacheKey, flights, cancellationToken);
-        }
+            })
+            .ToList();
     }
 
     public async Task<bool> BookFlightAsync(BookingRequest request, CancellationToken cancellationToken)
